@@ -3,6 +3,7 @@ import InputHandler
 import ScanHandler
 import os
 import DiffAnalyser
+import subprocess
 
 
 if(~os.path.exists("~/.mapdiff")):
@@ -43,8 +44,11 @@ an = DiffAnalyser.Analyser()
 # an.port_compare()
 
 # os.system("ndiff /home/artur/.mapdiff/routine_scans/00:16:01.xml ~/.mapdiff/default_scans/dscan.xml")
-os.system("ndiff /home/artur/.mapdiff/routine_scans/00:16:01.xml ~/.mapdiff/default_scans/dscan.xml")
+# os.system("ndiff /home/artur/.mapdiff/routine_scans/00:16:01.xml ~/.mapdiff/default_scans/dscan.xml")
 
+# ports_list = os.system('grep -oP \'portid="(\d{1,5})"\' /home/artur/.mapdiff/routine_scans/00:16:01.xml | grep -oP \'\d{1,5}\' ')
+
+path_to_scan_result = "/home/artur/.mapdiff/routine_scans/00:16:01.xml"
 
 
 
