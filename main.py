@@ -3,17 +3,15 @@ import InputHandler
 import ScanHandler
 import os
 import DiffAnalyser
-import subprocess
+import glob
 
 
 if(~os.path.exists("~/.mapdiff")):
     os.system("mkdir -p ~/.mapdiff")
     print("Directory ~/.mapdiff has been created in home directory.")
-
 if(~os.path.exists("~/.mapdiff/routine_scans")):
     os.system("mkdir -p ~/.mapdiff/routine_scans")
     print("Directory ~/.mapdiff/routine_scans has been created in home directory.")
-
 if(~os.path.exists("~/.mapdiff/default_scans")):
     os.system("mkdir -p ~/.mapdiff/default_scans")
     print("Directory ~/.mapdiff/default_scans has been created in home directory.")
@@ -37,18 +35,24 @@ an = DiffAnalyser.Analyser()
 # sh.default_scan('localhost')
 # sh.start_routine_scan()
 
-
-
 # sh.start_routine_scan()
 # an.simple_ndiff_compare('/home/artur/Desktop/studia/zit/projekt/port_monitor/routine_scans/1.xml', '/home/artur/Desktop/studia/zit/projekt/port_monitor/routine_scans/2.xml')
 # an.port_compare()
 
-# os.system("ndiff /home/artur/.mapdiff/routine_scans/00:16:01.xml ~/.mapdiff/default_scans/dscan.xml")
-# os.system("ndiff /home/artur/.mapdiff/routine_scans/00:16:01.xml ~/.mapdiff/default_scans/dscan.xml")
+######### main function loop
 
-# ports_list = os.system('grep -oP \'portid="(\d{1,5})"\' /home/artur/.mapdiff/routine_scans/00:16:01.xml | grep -oP \'\d{1,5}\' ')
+# os.listdir('~/.mapdiff/routine_scans/')
+# print(glob.glob('~/.mapdiff/routine_scans/'))
 
-path_to_scan_result = "/home/artur/.mapdiff/routine_scans/00:16:01.xml"
+
+
+# lista = os.listdir('/home/artur/.mapdiff/routine_scans')
+
+# for file in  lista:
+#     an.check_new_ports('~/.mapdiff/routine_scans/' + file)
+#     break
+
+an.print_analysis_report('~/.mapdiff/routine_scans/00:16:01.xml')
 
 
 
