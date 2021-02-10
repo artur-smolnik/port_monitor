@@ -31,8 +31,7 @@ class Scans:
 
         my_cron.write()
         # print("job started")
-        aaa = CronTab(user=True)
-        a - aaa.new()
+
 
     def stop_routine_scan(self):
         os.system("crontab -r")
