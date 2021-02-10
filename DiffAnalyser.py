@@ -3,37 +3,76 @@ import crontab
 import os
 from datetime import datetime
 import subprocess
-
+from pynotifier import Notification
 
 class Analyser:
 
-    # def __init__(self):
-    #     self.default_opened_ports = []
+    def __init__(self):
+        self.path_to_routine_scan_result = ''
+        self.list_of_previous_routine_scans = os.listdir('/home/artur/.mapdiff/routine_scans')
+
+    def find_routine_scan_result_path(self):
+        latest_list_of_scans = os.listdir('/home/artur/.mapdiff/routine_scans')
+        res = list(set(latest_list_of_scans)^set(self.list_of_previous_routine_scans))  #remove common elem's from above lists
+        return "~/.mapdiff/routine_scans/" + res[0]
 
 
-    def print_analysis_report(self, path_to_routine_scan_result):
-        scan, ports = self.check_new_ports(path_to_routine_scan_result)
-
-        if scan == -1:
-            print("There are no any changes.")
-            return -1
-        elif scan == 0:
-            print("Some ports are closed: ", end='')
-
+    def print_analysis_report(self):
+        scan_type, ports = self.check_new_ports(self.find_routine_scan_result_path())
+        notification_text = ''
+        if scan_type == -1:
+            pass
+            # print("There are no any changes.")
+        elif scan_type == 0:
             for port in ports:
-                print(port, end='')
+                notification_text += port
+                if ports.index(port) != len(ports) - 1:
+                    notification_text += ', '
 
-                if ports.index(port) != len(ports)-1:
-                    print(', ', end='')
-            return 0
-        elif scan == 1:
-            print("Some new ports are opened: ", end='')
+            Notification(
+                title='MapDiff Port Scanner',
+                description='Some ports are closed:' + notification_text,
+                icon_path='path/to/image/file/icon.png',  # On Windows .ico is required, on Linux - .png
+                duration=3,  # Duration in seconds
+                urgency=Notification.URGENCY_CRITICAL
+            ).send()
+
+        elif scan_type == 1:
+            # print("Some new ports are opened: ", end='')
             for port in ports:
-                print(port, end=' ')
+                notification_text += port
+                if ports.index(port) != len(ports) - 1:
+                    notification_text += ', '
 
-                if ports.index(port) != len(ports)-1:
-                    print(', ', end='')
-            return 0
+            Notification(
+                title='MapDiff Port Scanner',
+                description='New ports are open: '+ notification_text,
+                icon_path='path/to/image/file/icon.png',  # On Windows .ico is required, on Linux - .png
+                duration=3,  # Duration in seconds
+                urgency=Notification.URGENCY_CRITICAL
+            ).send()
+
+
+
+        # if scan_type == -1:
+        #     print("There are no any changes.")
+        #     return -1
+        # elif scan_type == 0:
+        #     print("Some ports are closed: ", end='')
+        #     for port in ports:
+        #         print(port, end='')
+        #
+        #         if ports.index(port) != len(ports)-1:
+        #             print(', ', end='')
+        #     return 0
+        # elif scan_type == 1:
+        #     print("Some new ports are opened: ", end='')
+        #     for port in ports:
+        #         print(port, end=' ')
+        #
+        #         if ports.index(port) != len(ports)-1:
+        #             print(', ', end='')
+        #     return 0
 
 
     def check_new_ports(self, path_to_routine_scan_result):
@@ -52,10 +91,10 @@ class Analyser:
             def_open_ports.remove(port)
             routine_open_ports.remove(port)
 
-        if len(def_open_ports) != 0:  # some ports are closed
-            return 0,def_open_ports
+        if len(def_open_ports) != 0:
+            return 0,def_open_ports          # some ports are closed
         elif len(routine_open_ports) != 0:
-            return 1,routine_open_ports  # new ports are opened
+            return 1,routine_open_ports      # new ports are opened
         else:
             return -1,-1
 
@@ -64,7 +103,7 @@ class Analyser:
     def read_open_ports(self, path_to_scan_result):
         open_ports_list = str(subprocess.check_output(
             'grep -oP \'portid="(\d{1,5})"\' ' + path_to_scan_result + ' | grep -oP \'\d{1,5}\' ',
-            shell=True))
+            shell=True))        # read portids from scan results
         open_ports_list = open_ports_list[2:len(open_ports_list) - 1].split('\\n')[
                           :-1]  # omit unnecessary chars, split by \n and pop last (empty) element
 

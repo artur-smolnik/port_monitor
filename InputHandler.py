@@ -6,12 +6,17 @@ class UserInput:
     def __init__(self):
         self.frequency = ''
         self.unimportant_ports = ''
+        self.target_address=''
 
     def input_unimportant_ports(self):
         print("Please type below numbers according to services you DON'T WANT TO WATCH. Separate them with comma, eg. 21, 22, 23, 80")
+        print("If you don't want to exclude ports, type \"n\".")
 
         while True:
             unports = input("Enter port numbers: ").replace(" ", "").replace("  ", "")
+            if unports == 'n':
+                self.unimportant_ports = -1
+                break
             try:
                 matched = re.match("\d{1,5}(,\d{1,5})*", unports).group(0)
             except Exception:
@@ -24,6 +29,11 @@ class UserInput:
                 else:
                     print("Your input is invalid. Let's try again.")
 
+    def input_target_address(self):
+        print("Please input ip address of target. Remember that you have to have permission to scan machines.")
+        target = input("Type ipv4 address: ")
+                      ################## do validation
+        self.target_address = target
 
 
     def input_frequency(self):
