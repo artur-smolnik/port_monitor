@@ -8,26 +8,24 @@ import getpass
 class Analyser:
 
     def __init__(self):
-        self.path_to_routine_scan_result = ''
+        self.routine_scan_path = ''
         self.list_of_previous_routine_scans = os.listdir('/home/artur/.mapdiff/routine_scans/')
         self.routine_scans_folder_path = "/home/" + getpass.getuser() + "/.mapdiff/routine_scans/"
         self.default_scans_folder_path = "/home/" + getpass.getuser() + "/.mapdiff/default_scans/"
+        self.previous_scan_path = self.default_scans_folder_path + "dscan.xml"
 
-    def find_routine_scan_path(self):
+    def get_last_routine_scan_path(self):
         latest_list_of_scans = os.listdir(self.routine_scans_folder_path)
         res = list(set(latest_list_of_scans) ^ set(
             self.list_of_previous_routine_scans))  # remove common elem's from above lists
         self.list_of_previous_routine_scans = os.listdir(self.routine_scans_folder_path)
         if len(res) == 0:
             return "null"
-
-
         else:
             return self.routine_scans_folder_path + res[0]
 
-
-    def print_analysis_report(self):
-        def_ports, routine_ports = self.check_new_ports(self.find_routine_scan_path())
+    def print_notifications(self):
+        def_ports, routine_ports, def_ports_names, routine_ports_names = self.extract_changed_ports()
         notification_text = ''
 
         if len(def_ports) != 0 and len(routine_ports) != 0:
@@ -77,9 +75,23 @@ class Analyser:
                 urgency=Notification.URGENCY_CRITICAL
             ).send()
 
-    def check_new_ports(self, path_to_routine_scan_result):
-        def_ports = self.read_open_ports(self.default_scans_folder_path + "dscan.xml")
-        routine_ports = self.read_open_ports(path_to_routine_scan_result)
+        print(self.previous_scan_path)
+
+    def extract_changed_ports(self):
+        def_ports = self.read_ports_from_xml(self.previous_scan_path)
+
+        def_ports_names = str(
+            subprocess.check_output('grep -oP \'<service name="(.*?)"\' ' + self.previous_scan_path, shell=True))
+        def_ports_names = def_ports_names.replace("<service name=", "").replace('"', '')
+        def_ports_names = def_ports_names[2:len(def_ports_names) - 1].split('\\n')[:-1]
+
+        self.previous_scan_path = self.get_last_routine_scan_path()
+        routine_ports = self.read_ports_from_xml(self.previous_scan_path)
+
+        routine_ports_names = str(
+            subprocess.check_output('grep -oP \'<service name="(.*?)"\' ' + self.previous_scan_path, shell=True))
+        routine_ports_names = routine_ports_names.replace("<service name=", "").replace('"', '')
+        routine_ports_names = routine_ports_names[2:len(routine_ports_names) - 1].split('\\n')[:-1]
 
         common_ports = []
 
@@ -91,11 +103,27 @@ class Analyser:
             def_ports.remove(port)
             routine_ports.remove(port)
 
-        return def_ports, routine_ports
+        common_ports.clear()
 
-    def read_open_ports(self, path_to_scan_result):
+        for name in def_ports_names:
+            if name in routine_ports_names:
+                common_ports.append(name)
+
+        for name in common_ports:
+            def_ports_names.remove(name)
+            routine_ports_names.remove(name)
+
+        for i in range(len(def_ports)):
+            def_ports[i] += '(' + def_ports_names[i] + ')'
+
+        for i in range(len(routine_ports)):
+            routine_ports_names[i] += '(' + routine_ports_names[i] + ')'
+
+        return def_ports, routine_ports, def_ports_names, routine_ports_names
+
+    def read_ports_from_xml(self, path_to_xml):
         open_ports_list = str(subprocess.check_output(
-            'grep -oP \'portid="(\d{1,5})"\' ' + path_to_scan_result + ' | grep -oP \'\d{1,5}\' ',
+            'grep -oP \'portid="(\d{1,5})"\' ' + path_to_xml + ' | grep -oP \'\d{1,5}\' ',
             shell=True))  # read portids from scan results
         open_ports_list = open_ports_list[2:len(open_ports_list) - 1].split('\\n')[
                           :-1]  # omit unnecessary chars, split by \n and pop last (empty) element

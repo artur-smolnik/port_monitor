@@ -5,12 +5,12 @@ from DiffAnalyser import Analyser
 from multiprocessing import Process
 import subprocess
 import os
-import getpass
 
-# to install:
-# pip3 install py-notifier os.system("pip3 install py-notifier
-
-
+# tmp = str(subprocess.check_output('grep -oP \'<service name="(.*?)"\' /home/artur/.mapdiff/default_scans/dscan.xml', shell=True))
+# tmp = tmp.replace("<service name=", "").replace('"', '')
+# tmp = tmp[2:len(tmp) - 1].split('\\n')[:-1]
+# print(tmp)
+# exit()
 try:
     result = subprocess.check_output('pip3 list | grep -F py-notifier', shell=True)
 except Exception:
@@ -41,8 +41,8 @@ so that app won't be notifying you about changes in their state. Other ports wil
 
 def start_new_scanning():
     while True:
-        sh.start_routine_scan2()
-        an.print_analysis_report()
+        sh.start_routine_scan()
+        an.print_notifications()
         print("nowy skan")
 
 ui.input_unimportant_ports()

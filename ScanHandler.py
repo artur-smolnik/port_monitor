@@ -21,7 +21,7 @@ class Scans:
             os.system(
                 "nmap -F " + self.userInput.target_address + " -oX " + self.default_scans_folder_path + "dscan.xml > /dev/null")
 
-    def start_routine_scan2(self):
+    def start_routine_scan(self):
         now = datetime.now()
         current_time = str(now.year) + '.' + str(now.month) + '.' + str(now.day) + '_' + str(now.hour) + '.' + str(
             now.minute) + '.' + str(now.second)
