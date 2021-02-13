@@ -16,10 +16,10 @@ class Scans:
 
         if (self.userInput.unimportant_ports != -1):
             os.system(
-                "nmap -F " + self.userInput.target_address + " --exclude-ports " + self.userInput.unimportant_ports + " -oX " + self.default_scans_folder_path + "dscan.xml > /dev/null")
+                "nmap " + self.userInput.target_address + " --exclude-ports " + self.userInput.unimportant_ports + " -oX " + self.default_scans_folder_path + "dscan.xml > /dev/null")
         else:
             os.system(
-                "nmap -F " + self.userInput.target_address + " -oX " + self.default_scans_folder_path + "dscan.xml > /dev/null")
+                "nmap " + self.userInput.target_address + " -oX " + self.default_scans_folder_path + "dscan.xml > /dev/null")
 
     def start_routine_scan(self):
         now = datetime.now()
@@ -28,8 +28,11 @@ class Scans:
 
 
         if (self.userInput.frequency[0] == 'm'):
-            time.sleep(int(self.userInput.frequency[1:len(self.userInput.frequency)]))
+            time.sleep(60*int(self.userInput.frequency[1:len(self.userInput.frequency)]))
         elif (self.userInput.frequency[0] == 'h'):
             time.sleep(60 * 60 * int(self.userInput.frequency[1:len(self.userInput.frequency)]))
 
-        os.system('nmap localhost -oX ' + self.routine_scans_folder_path + current_time + '.xml > /dev/null')
+        if self.userInput.unimportant_ports != 'n':
+            os.system('nmap ' + self.userInput.target_address + ' --exclude-ports ' + self.userInput.unimportant_ports +' -oX ' + self.routine_scans_folder_path + current_time + '.xml > /dev/null')
+        else:
+            os.system('nmap ' + self.userInput.target_address + ' -oX ' + self.routine_scans_folder_path + current_time + '.xml > /dev/null')

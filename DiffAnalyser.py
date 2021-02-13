@@ -34,7 +34,7 @@ class Analyser:
                 if def_ports.index(port) != len(def_ports) - 1:
                     notification_text += ', '
 
-            notification_text += ", opened ports: "
+            notification_text += " | Opened ports: "
             for port in routine_ports:
                 notification_text += port
                 if routine_ports.index(port) != len(routine_ports) - 1:

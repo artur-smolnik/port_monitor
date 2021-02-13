@@ -11,13 +11,13 @@ try:
 except Exception:
     os.system("pip3 install py-notifier > /dev/null")
 
-if (~os.path.exists("~/.mapdiff")):
+if (os.path.exists("~/.mapdiff")):
     os.system("mkdir -p ~/.mapdiff")
     print("Directory ~/.mapdiff has been created in home directory.")
-if (~os.path.exists("~/.mapdiff/routine_scans")):
+if (os.path.exists("~/.mapdiff/routine_scans")):
     os.system("mkdir -p ~/.mapdiff/routine_scans")
     print("Directory ~/.mapdiff/routine_scans has been created in home directory.")
-if (~os.path.exists("~/.mapdiff/default_scans")):
+if (os.path.exists("~/.mapdiff/default_scans")):
     os.system("mkdir -p ~/.mapdiff/default_scans")
     print("Directory ~/.mapdiff/default_scans has been created in home directory.")
 

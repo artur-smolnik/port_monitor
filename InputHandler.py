@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import re
-import socket
 
 
 class UserInput:
@@ -12,12 +11,12 @@ class UserInput:
 
     def input_unimportant_ports(self):
         print()
-        print(
-            "Please type below numbers according to services you DON'T WANT TO WATCH. Separate them with comma, eg. 21, 22, 23, 80")
+        print("Please type below numbers according to services you DON'T WANT TO WATCH. Separate them with comma, eg. 21, 22, 23, 80. ")
+        print("You can also user range, eg. 100-1000, 342-377.")
         print("If you don't want to exclude ports, type \"n\".")
 
         while True:
-            unports = input("Enter port numbers: ").replace(" ", "").replace("  ", "")
+            unports = input("Enter port numbers: ").replace(" ", "")
             if unports == 'n':
                 self.unimportant_ports = -1
                 break
