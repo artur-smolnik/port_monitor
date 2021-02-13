@@ -6,11 +6,6 @@ from multiprocessing import Process
 import subprocess
 import os
 
-# tmp = str(subprocess.check_output('grep -oP \'<service name="(.*?)"\' /home/artur/.mapdiff/default_scans/dscan.xml', shell=True))
-# tmp = tmp.replace("<service name=", "").replace('"', '')
-# tmp = tmp[2:len(tmp) - 1].split('\\n')[:-1]
-# print(tmp)
-# exit()
 try:
     result = subprocess.check_output('pip3 list | grep -F py-notifier', shell=True)
 except Exception:
@@ -43,11 +38,12 @@ def start_new_scanning():
     while True:
         sh.start_routine_scan()
         an.print_notifications()
-        print("nowy skan")
+
 
 ui.input_unimportant_ports()
 ui.input_target_address()
 ui.input_frequency()
+
 sh.start_default_scan()
 
 p1 = Process(target=start_new_scanning)

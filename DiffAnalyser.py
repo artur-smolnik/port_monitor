@@ -8,7 +8,6 @@ import getpass
 class Analyser:
 
     def __init__(self):
-        self.routine_scan_path = ''
         self.list_of_previous_routine_scans = os.listdir('/home/artur/.mapdiff/routine_scans/')
         self.routine_scans_folder_path = "/home/" + getpass.getuser() + "/.mapdiff/routine_scans/"
         self.default_scans_folder_path = "/home/" + getpass.getuser() + "/.mapdiff/default_scans/"
@@ -74,8 +73,6 @@ class Analyser:
                 duration=3,  # Duration in seconds
                 urgency=Notification.URGENCY_CRITICAL
             ).send()
-
-        print(self.previous_scan_path)
 
     def extract_changed_ports(self):
         def_ports = self.read_ports_from_xml(self.previous_scan_path)
